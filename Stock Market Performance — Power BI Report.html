@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<!-- saved from url=(0063)file:///C:/Users/aravi/Downloads/Stock_PowerBI_Dashboard_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Market Performance — Power BI Report</title>
+<script src="./Stock Market Performance — Power BI Report_files/chart.umd.js.download"></script>
+<style>
+  :root {
+    --pbi-yellow: #F2C811;
+    --pbi-dark: #1A1A2E;
+    --pbi-panel: #FFFFFF;
+    --pbi-sidebar: #252540;
+    --pbi-accent: #118DFF;
+    --pbi-accent2: #12239E;
+    --pbi-green: #107C10;
+    --pbi-red: #C10F1F;
+    --pbi-border: #E5E7EB;
+    --pbi-bg: #F3F4F7;
+    --pbi-text: #1F2937;
+    --pbi-muted: #6B7280;
+    --pbi-card: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--pbi-bg); color: var(--pbi-text); min-height: 100vh; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: var(--pbi-dark);
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--pbi-yellow);
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 8px; }
+  .topbar-logo svg { width: 22px; height: 22px; }
+  .topbar-logo span { color: #fff; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
+  .topbar-logo span b { color: var(--pbi-yellow); }
+  .topbar-nav { display: flex; gap: 2px; margin-left: 24px; }
+  .topbar-nav a {
+    color: rgba(255,255,255,0.7); font-size: 12px; padding: 4px 12px;
+    border-radius: 3px; cursor: pointer; text-decoration: none; transition: all 0.15s;
+  }
+  .topbar-nav a:hover, .topbar-nav a.active { background: rgba(255,255,255,0.12); color: #fff; }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .topbar-right span { color: rgba(255,255,255,0.6); font-size: 11px; }
+  .pbi-badge { background: var(--pbi-yellow); color: #1a1a2e; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.05em; }
+
+  /* ── Report area ── */
+  .report-wrap { display: flex; height: calc(100vh - 44px); }
+
+  /* ── Left filter panel ── */
+  .filter-panel {
+    width: 220px;
+    background: var(--pbi-sidebar);
+    flex-shrink: 0;
+    padding: 16px 14px;
+    overflow-y: auto;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .filter-panel h3 { color: rgba(255,255,255,0.5); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  .filter-section { margin-bottom: 22px; }
+  .filter-section label { display: block; color: rgba(255,255,255,0.85); font-size: 11px; font-weight: 500; margin-bottom: 6px; }
+  .filter-section select, .filter-section input[type=range] {
+    width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    color: #fff; border-radius: 4px; font-size: 11px; padding: 5px 8px; cursor: pointer;
+  }
+  .filter-section select option { background: #252540; }
+  .filter-section input[type=range] { padding: 2px 0; cursor: pointer; accent-color: var(--pbi-yellow); }
+  .range-val { color: var(--pbi-yellow); font-size: 11px; font-weight: 600; text-align: right; margin-top: 3px; }
+  .filter-btn {
+    width: 100%; background: var(--pbi-yellow); color: var(--pbi-dark);
+    border: none; border-radius: 4px; padding: 7px; font-size: 11px; font-weight: 700;
+    cursor: pointer; margin-top: 4px; transition: opacity 0.15s;
+  }
+  .filter-btn:hover { opacity: 0.88; }
+  .filter-reset {
+    width: 100%; background: transparent; color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 6px;
+    font-size: 11px; cursor: pointer; margin-top: 6px; transition: all 0.15s;
+  }
+  .filter-reset:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); }
+
+  .slicer-list { display: flex; flex-direction: column; gap: 5px; }
+  .slicer-item {
+    display: flex; align-items: center; gap: 7px;
+    color: rgba(255,255,255,0.75); font-size: 11px; cursor: pointer; padding: 4px 6px;
+    border-radius: 3px; transition: background 0.12s; user-select: none;
+  }
+  .slicer-item:hover { background: rgba(255,255,255,0.07); }
+  .slicer-item input[type=checkbox] { accent-color: var(--pbi-yellow); cursor: pointer; }
+  .slicer-item.checked { color: #fff; }
+
+  /* ── Main canvas ── */
+  .canvas {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px;
+    background: var(--pbi-bg);
+  }
+
+  /* ── Page tabs ── */
+  .page-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 2px solid var(--pbi-border);
+    margin-bottom: 16px;
+    background: #fff;
+    padding: 0 12px;
+    border-radius: 6px 6px 0 0;
+    border: 1px solid var(--pbi-border);
+  }
+  .page-tab {
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--pbi-muted);
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    margin-bottom: -1px;
+  }
+  .page-tab:hover { color: var(--pbi-accent); }
+  .page-tab.active { color: var(--pbi-accent2); border-bottom-color: var(--pbi-accent2); }
+
+  /* ── Report header ── */
+  .report-header {
+    background: linear-gradient(135deg, var(--pbi-accent2) 0%, var(--pbi-accent) 100%);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .report-header h1 { color: #fff; font-size: 18px; font-weight: 600; }
+  .report-header p { color: rgba(255,255,255,0.75); font-size: 11px; margin-top: 2px; }
+  .report-header-badge { background: rgba(255,255,255,0.15); color: #fff; font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 0.05em; }
+
+  /* ── KPI row ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 14px; }
+  .kpi-card {
+    background: var(--pbi-card);
+    border-radius: 6px;
+    border: 1px solid var(--pbi-border);
+    padding: 12px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--pbi-accent); border-radius: 6px 0 0 6px; }
+  .kpi-card.green::before { background: var(--pbi-green); }
+  .kpi-card.red::before { background: var(--pbi-red); }
+  .kpi-card.yellow::before { background: var(--pbi-yellow); }
+  .kpi-card.purple::before { background: #7B38D8; }
+  .kpi-label { font-size: 10px; color: var(--pbi-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .kpi-value { font-size: 22px; font-weight: 700; color: var(--pbi-text); line-height: 1; }
+  .kpi-delta { font-size: 10px; margin-top: 4px; font-weight: 600; }
+  .kpi-delta.up { color: var(--pbi-green); }
+  .kpi-delta.down { color: var(--pbi-red); }
+  .kpi-delta.neutral { color: var(--pbi-muted); }
+
+  /* ── Chart grid ── */
+  .chart-row { display: grid; gap: 12px; margin-bottom: 12px; }
+  .chart-row.cols-2 { grid-template-columns: 3fr 2fr; }
+  .chart-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .chart-row.cols-full { grid-template-columns: 1fr; }
+
+  .chart-card {
+    background: var(--pbi-card);
+    border-radius: 6px;
+    border: 1px solid var(--pbi-border);
+    padding: 14px 16px;
+    position: relative;
+  }
+  .chart-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .chart-card-title { font-size: 12px; font-weight: 600; color: var(--pbi-text); }
+  .chart-card-sub { font-size: 10px; color: var(--pbi-muted); margin-top: 1px; }
+  .chart-ellipsis { font-size: 16px; color: var(--pbi-muted); cursor: pointer; line-height: 1; }
+
+  .legend-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--pbi-muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-line { width: 18px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── Table ── */
+  .pbi-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .pbi-table thead th { background: #F8F9FA; font-weight: 600; color: var(--pbi-muted); text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--pbi-border); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .pbi-table tbody td { padding: 7px 10px; border-bottom: 1px solid #F3F4F7; color: var(--pbi-text); }
+  .pbi-table tbody tr:hover { background: #F8F9FB; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; }
+  .badge-up { background: #DCFCE7; color: #166534; }
+  .badge-down { background: #FEE2E2; color: #991B1B; }
+  .badge-high { background: #EDE9FE; color: #5B21B6; }
+  .badge-normal { background: #F1F5F9; color: #475569; }
+
+  /* ── Page containers ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Watermark ── */
+  .pbi-watermark {
+    position: fixed; bottom: 12px; right: 18px;
+    font-size: 10px; color: rgba(0,0,0,0.25); font-weight: 600;
+    letter-spacing: 0.08em; pointer-events: none;
+  }
+
+  @media print {
+    .topbar, .filter-panel, .page-tabs { display: none !important; }
+    .canvas { overflow: visible; height: auto; }
+    .chart-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <svg viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="4" fill="#F2C811"></rect>
+      <rect x="5" y="18" width="5" height="9" fill="#1A1A2E"></rect>
+      <rect x="13" y="11" width="5" height="16" fill="#1A1A2E"></rect>
+      <rect x="21" y="5" width="5" height="22" fill="#1A1A2E"></rect>
+    </svg>
+    <span><b>Power</b>BI</span>
+  </div>
+  <div class="topbar-nav">
+    <a class="active">File</a>
+    <a>Home</a>
+    <a>Insert</a>
+    <a>Modeling</a>
+    <a>View</a>
+    <a>Help</a>
+  </div>
+  <div class="topbar-right">
+    <span>Stock_Market_Performance_Analysis.pbix</span>
+    <span class="pbi-badge">REPORT VIEW</span>
+  </div>
+</div>
+
+<div class="report-wrap">
+
+  <!-- Filter panel -->
+  <div class="filter-panel">
+    <div class="filter-section">
+      <h3>Filters</h3>
+      <label>Date Range</label>
+      <select id="filterDate" onchange="applyFilters()">
+        <option value="all">All Periods</option>
+        <option value="jan">January 2026</option>
+        <option value="feb">February 2026</option>
+        <option value="q1">Q1 2026</option>
+        <option value="q2">Q2 2026</option>
+        <option value="q3q4">Q3–Q4 2026</option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label>Min Volume (M shares)</label>
+      <input type="range" id="filterVol" min="30" max="92" value="30" step="1" oninput="document.getElementById(&#39;volVal&#39;).textContent=this.value+&#39;M&#39;; applyFilters()">
+      <div class="range-val" id="volVal">30M</div>
+    </div>
+
+    <div class="filter-section">
+      <label>Return Type</label>
+      <div class="slicer-list">
+        <label class="slicer-item checked"><input type="checkbox" id="slicerPos" checked="" onchange="applyFilters()"> Positive days</label>
+        <label class="slicer-item checked"><input type="checkbox" id="slicerNeg" checked="" onchange="applyFilters()"> Negative days</label>
+        <label class="slicer-item checked"><input type="checkbox" id="slicerHigh" checked="" onchange="applyFilters()"> High volume (&gt;80M)</label>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <button class="filter-btn" onclick="applyFilters()">▶ Apply Filters</button>
+      <button class="filter-reset" onclick="resetFilters()">↻ Reset All</button>
+    </div>
+
+    <div class="filter-section" style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.08); padding-top:18px;">
+      <h3>Fields</h3>
+      <div style="color:rgba(255,255,255,0.5);font-size:10px;line-height:1.8;">
+        📁 StockData<br>
+        &nbsp;&nbsp;📅 Date<br>
+        &nbsp;&nbsp;💲 Close<br>
+        &nbsp;&nbsp;💲 Open / High / Low<br>
+        &nbsp;&nbsp;📊 Volume<br>
+        &nbsp;&nbsp;📈 Daily_Return<br>
+        &nbsp;&nbsp;〰 MA5 / MA10<br>
+        &nbsp;&nbsp;⚡ Volatility<br>
+        &nbsp;&nbsp;↔ Daily_Range
+      </div>
+    </div>
+  </div>
+
+  <!-- Main canvas -->
+  <div class="canvas">
+
+    <!-- Page tabs -->
+    <div class="page-tabs">
+      <div class="page-tab active" onclick="switchPage(&#39;overview&#39;,this)">📊 Executive Overview</div>
+      <div class="page-tab" onclick="switchPage(&#39;risk&#39;,this)">⚡ Risk &amp; Volatility</div>
+      <div class="page-tab" onclick="switchPage(&#39;trading&#39;,this)">🔍 Trading Intelligence</div>
+    </div>
+
+    <!-- PAGE 1: OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="report-header">
+        <div>
+          <h1>Stock Market Performance Analysis</h1>
+          <p>Analysis Period: Jan 21, 2026 – Dec 2, 2026 &nbsp;·&nbsp; 22 Trading Sessions &nbsp;·&nbsp; Data cleaned &amp; verified</p>
+        </div>
+        <div class="report-header-badge">LIVE REPORT</div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-card green">
+          <div class="kpi-label">Latest Close</div>
+          <div class="kpi-value" id="kpiClose">$261.73</div>
+          <div class="kpi-delta down" id="kpiCloseD">▼ 4.998% last session</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Total Return</div>
+          <div class="kpi-value" id="kpiReturn">+5.69%</div>
+          <div class="kpi-delta up" id="kpiReturnD">↑ $247.65 → $261.73</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Period High</div>
+          <div class="kpi-value" id="kpiHigh">$280.90</div>
+          <div class="kpi-delta neutral" id="kpiHighD">Jun 2 intraday</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Period Low</div>
+          <div class="kpi-value" id="kpiLow">$244.68</div>
+          <div class="kpi-delta neutral" id="kpiLowD">Jan 23 intraday</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">Avg Daily Volume</div>
+          <div class="kpi-value" id="kpiVol">54.9M</div>
+          <div class="kpi-delta neutral" id="kpiVolD">shares per session</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-label">Bull / Bear Days</div>
+          <div class="kpi-value" id="kpiBull">13 / 8</div>
+          <div class="kpi-delta up" id="kpiBullD">62% positive sessions</div>
+        </div>
+      </div>
+
+      <div class="chart-row cols-full">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Price Trend — Close with MA5 &amp; MA10</div>
+              <div class="chart-card-sub">Line chart · Closing price vs moving averages over analysis period</div>
+            </div>
+            <span class="chart-ellipsis">⋯</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-item"><div class="legend-line" style="background:#118DFF"></div> Close Price</div>
+            <div class="legend-item"><div class="legend-line" style="background:#107C10;border-top:2px dashed #107C10;background:none;border-bottom:none"></div> MA5</div>
+            <div class="legend-item"><div class="legend-line" style="background:#C10F1F;"></div> MA10</div>
+          </div>
+          <div style="position:relative;height:220px;"><canvas id="chartPrice" role="img" aria-label="Line chart of stock closing price with MA5 and MA10 overlays from January to December 2026" style="box-sizing: border-box; display: block; height: 220px; width: 1185px;" width="1482" height="275"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Trading Volume by Session</div>
+              <div class="chart-card-sub">Bar chart · Purple = high volume (&gt;80M shares)</div>
+            </div>
+            <span class="chart-ellipsis">⋯</span>
+          </div>
+          <div style="position:relative;height:180px;"><canvas id="chartVol" role="img" aria-label="Bar chart of daily trading volume per session" style="box-sizing: border-box; display: block; height: 180px; width: 690px;" width="863" height="225"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Return Distribution</div>
+              <div class="chart-card-sub">Histogram · Days by return bucket</div>
+            </div>
+            <span class="chart-ellipsis">⋯</span>
+          </div>
+          <div style="position:relative;height:180px;"><canvas id="chartDist" role="img" aria-label="Histogram of daily return distribution bucketed by 1% intervals" style="box-sizing: border-box; display: block; height: 180px; width: 449px;" width="561" height="225"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: RISK -->
+    <div class="page" id="page-risk">
+      <div class="report-header" style="background:linear-gradient(135deg,#7B38D8,#C10F1F)">
+        <div>
+          <h1>Risk &amp; Volatility Analysis</h1>
+          <p>5-day rolling volatility · Daily return swings · Price range analysis</p>
+        </div>
+        <div class="report-header-badge">RISK REPORT</div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-card red">
+          <div class="kpi-label">Best Day</div>
+          <div class="kpi-value">+4.06%</div>
+          <div class="kpi-delta up">Feb 2, 2026</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Worst Day</div>
+          <div class="kpi-value">−5.27%</div>
+          <div class="kpi-delta down">Feb 13, 2026</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Daily Return</div>
+          <div class="kpi-value">+0.29%</div>
+          <div class="kpi-delta up">Slight bullish bias</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Peak Volatility</div>
+          <div class="kpi-value">3.75%</div>
+          <div class="kpi-delta neutral">Feb 19</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Daily Range</div>
+          <div class="kpi-value">$6.21</div>
+          <div class="kpi-delta neutral">High–Low spread</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-label">Max Range Day</div>
+          <div class="kpi-value">$15.54</div>
+          <div class="kpi-delta neutral">Dec 2, 2026</div>
+        </div>
+      </div>
+
+      <div class="chart-row cols-full">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">5-Day Rolling Volatility</div>
+              <div class="chart-card-sub">Area chart · Standard deviation of returns over rolling 5-session window</div>
+            </div>
+            <span class="chart-ellipsis">⋯</span>
+          </div>
+          <div style="position:relative;height:200px;"><canvas id="chartVix" role="img" aria-label="Area chart of 5-day rolling volatility. Peaked in February at 3.75%." style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Daily Returns (%)</div>
+              <div class="chart-card-sub">Bar chart · Green = positive · Red = negative</div>
+            </div>
+          </div>
+          <div style="position:relative;height:180px;"><canvas id="chartRet" role="img" aria-label="Bar chart of daily return percentages, color coded green for positive and red for negative." style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Daily Price Range (High − Low)</div>
+              <div class="chart-card-sub">Bar chart · Intraday spread per session</div>
+            </div>
+          </div>
+          <div style="position:relative;height:180px;"><canvas id="chartRange" role="img" aria-label="Bar chart of daily high minus low price range per session." style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: TRADING -->
+    <div class="page" id="page-trading">
+      <div class="report-header" style="background:linear-gradient(135deg,#0F6E56,#118DFF)">
+        <div>
+          <h1>Trading Intelligence</h1>
+          <p>OHLC breakdown · Volume vs return correlation · Session detail table</p>
+        </div>
+        <div class="report-header-badge">INTELLIGENCE</div>
+      </div>
+
+      <div class="chart-row cols-full">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">OHLC — Open, High, Low, Close per Session</div>
+              <div class="chart-card-sub">Grouped bar · Blue = Open, Teal = High, Coral = Low, Navy = Close</div>
+            </div>
+          </div>
+          <div style="position:relative;height:220px;"><canvas id="chartOHLC" role="img" aria-label="Grouped bar chart showing Open, High, Low, Close prices per trading session." style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Volume vs Absolute Return (Scatter)</div>
+              <div class="chart-card-sub">Each bubble = one session · Bubble size = daily range</div>
+            </div>
+          </div>
+          <div style="position:relative;height:200px;"><canvas id="chartScatter" role="img" aria-label="Scatter chart plotting trading volume against absolute daily return. Larger bubbles indicate wider price ranges." style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Top Sessions by Volume</div>
+              <div class="chart-card-sub">Table · Filtered to highest activity days</div>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="pbi-table" id="topTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Close</th>
+                  <th>Volume</th>
+                  <th>Return</th>
+                  <th>Signal</th>
+                </tr>
+              </thead>
+              <tbody id="topTableBody">
+      <tr>
+        <td>2026-01-30</td>
+        <td><strong>$259.48</strong></td>
+        <td>92.4M</td>
+        <td><span class="badge badge-up">+0.47%</span></td>
+        <td><span class="badge badge-high">High Vol</span></td>
+      </tr>
+      <tr>
+        <td>2026-04-02</td>
+        <td><strong>$276.49</strong></td>
+        <td>90.5M</td>
+        <td><span class="badge badge-up">+2.60%</span></td>
+        <td><span class="badge badge-high">High Vol</span></td>
+      </tr>
+      <tr>
+        <td>2026-12-02</td>
+        <td><strong>$261.73</strong></td>
+        <td>81.1M</td>
+        <td><span class="badge badge-down">-5.00%</span></td>
+        <td><span class="badge badge-high">High Vol</span></td>
+      </tr>
+      <tr>
+        <td>2026-02-02</td>
+        <td><strong>$270.01</strong></td>
+        <td>73.9M</td>
+        <td><span class="badge badge-up">+4.06%</span></td>
+        <td><span class="badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-01-29</td>
+        <td><strong>$258.28</strong></td>
+        <td>67.3M</td>
+        <td><span class="badge badge-up">+0.72%</span></td>
+        <td><span class="badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-03-02</td>
+        <td><strong>$269.48</strong></td>
+        <td>64.4M</td>
+        <td><span class="badge badge-up">+1.85%</span></td>
+        <td><span class="badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-02-17</td>
+        <td><strong>$263.88</strong></td>
+        <td>58.5M</td>
+        <td><span class="badge badge-up">+3.17%</span></td>
+        <td><span class="badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-02-13</td>
+        <td><strong>$255.78</strong></td>
+        <td>56.3M</td>
+        <td><span class="badge badge-down">-5.27%</span></td>
+        <td><span class="badge badge-normal">Normal</span></td>
+      </tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /canvas -->
+</div><!-- /report-wrap -->
+
+<div class="pbi-watermark">Microsoft Power BI &nbsp;·&nbsp; Stock Analysis Report</div>
+
+<script>
+const DATA = [{"date":"2026-01-21","open":248.7,"high":251.56,"low":245.18,"close":247.65,"volume":54641730,"daily_return":0,"ma5":null,"ma10":null,"daily_range":6.38,"volatility":null},{"date":"2026-01-22","open":249.2,"high":251.0,"low":248.15,"close":248.35,"volume":39708340,"daily_return":0.283,"ma5":null,"ma10":null,"daily_range":2.85,"volatility":null},{"date":"2026-01-23","open":247.32,"high":249.41,"low":244.68,"close":248.04,"volume":41688980,"daily_return":-0.125,"ma5":null,"ma10":null,"daily_range":4.73,"volatility":null},{"date":"2026-01-26","open":251.48,"high":256.56,"low":249.8,"close":255.41,"volume":55969230,"daily_return":2.971,"ma5":null,"ma10":null,"daily_range":6.76,"volatility":null},{"date":"2026-01-27","open":259.17,"high":261.95,"low":258.21,"close":258.27,"volume":49648270,"daily_return":1.12,"ma5":251.54,"ma10":null,"daily_range":3.74,"volatility":null},{"date":"2026-01-28","open":257.65,"high":258.86,"low":254.51,"close":256.44,"volume":41287970,"daily_return":-0.709,"ma5":253.3,"ma10":null,"daily_range":4.35,"volatility":1.429},{"date":"2026-01-29","open":258.0,"high":259.65,"low":254.41,"close":258.28,"volume":67253010,"daily_return":0.718,"ma5":255.29,"ma10":null,"daily_range":5.24,"volatility":1.41},{"date":"2026-01-30","open":255.16,"high":261.9,"low":252.18,"close":259.48,"volume":92443410,"daily_return":0.465,"ma5":257.58,"ma10":null,"daily_range":9.72,"volatility":1.337},{"date":"2026-02-02","open":260.03,"high":270.49,"low":259.2,"close":270.01,"volume":73913430,"daily_return":4.058,"ma5":260.5,"ma10":null,"daily_range":11.29,"volatility":1.773},{"date":"2026-02-13","open":262.01,"high":262.23,"low":255.45,"close":255.78,"volume":56290670,"daily_return":-5.27,"ma5":260.0,"ma10":255.77,"daily_range":6.78,"volatility":3.368},{"date":"2026-02-17","open":258.05,"high":266.29,"low":255.54,"close":263.88,"volume":58469090,"daily_return":3.167,"ma5":261.49,"ma10":257.39,"daily_range":10.75,"volatility":3.641},{"date":"2026-02-18","open":263.6,"high":266.82,"low":262.45,"close":264.35,"volume":34203340,"daily_return":0.178,"ma5":262.7,"ma10":258.99,"daily_range":4.37,"volatility":3.646},{"date":"2026-02-19","open":262.6,"high":264.48,"low":260.05,"close":260.58,"volume":30845290,"daily_return":-1.426,"ma5":262.92,"ma10":260.25,"daily_range":4.43,"volatility":3.75},{"date":"2026-02-20","open":258.97,"high":264.75,"low":258.16,"close":264.58,"volume":42070500,"daily_return":1.535,"ma5":261.83,"ma10":261.17,"daily_range":6.59,"volatility":3.224},{"date":"2026-03-02","open":269.2,"high":271.88,"low":267.61,"close":269.48,"volume":64394660,"daily_return":1.852,"ma5":264.57,"ma10":262.29,"daily_range":4.26,"volatility":1.75},{"date":"2026-04-02","open":272.29,"high":278.95,"low":272.29,"close":276.49,"volume":90545710,"daily_return":2.601,"ma5":267.1,"ma10":264.29,"daily_range":6.66,"volatility":1.591},{"date":"2026-05-02","open":278.13,"high":279.5,"low":273.23,"close":275.91,"volume":52977440,"daily_return":-0.21,"ma5":269.41,"ma10":266.05,"daily_range":6.27,"volatility":1.646},{"date":"2026-06-02","open":277.12,"high":280.9,"low":276.93,"close":278.12,"volume":50453410,"daily_return":0.801,"ma5":272.92,"ma10":267.92,"daily_range":3.98,"volatility":1.07},{"date":"2026-09-02","open":277.9,"high":278.2,"low":271.7,"close":274.62,"volume":44623400,"daily_return":-1.258,"ma5":274.92,"ma10":268.38,"daily_range":6.5,"volatility":1.549},{"date":"2026-10-02","open":274.88,"high":275.37,"low":272.94,"close":273.68,"volume":34376900,"daily_return":-0.342,"ma5":275.76,"ma10":270.17,"daily_range":2.43,"volatility":1.47},{"date":"2026-11-02","open":274.69,"high":280.18,"low":274.45,"close":275.5,"volume":51931280,"daily_return":0.665,"ma5":275.57,"ma10":271.33,"daily_range":5.73,"volatility":0.837},{"date":"2026-12-02","open":275.59,"high":275.72,"low":260.18,"close":261.73,"volume":81077230,"daily_return":-4.998,"ma5":272.73,"ma10":271.07,"daily_range":15.54,"volatility":2.372}];
+
+let filtered = [...DATA];
+let charts = {};
+
+function getLabels(d) { return d.map(r => r.date.slice(5)); }
+
+function destroyAll() { Object.values(charts).forEach(c => { if(c) c.destroy(); }); charts = {}; }
+
+function buildAllCharts(d) {
+  destroyAll();
+  const labels = getLabels(d);
+
+  // Price chart
+  if(document.getElementById('chartPrice')) {
+    charts.price = new Chart(document.getElementById('chartPrice'), {
+      type: 'line',
+      data: { labels, datasets: [
+        { label:'Close', data: d.map(r=>r.close), borderColor:'#118DFF', borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#118DFF', tension:0.3, fill:false },
+        { label:'MA5', data: d.map(r=>r.ma5), borderColor:'#107C10', borderWidth:1.5, borderDash:[5,4], pointRadius:0, tension:0.3, fill:false },
+        { label:'MA10', data: d.map(r=>r.ma10), borderColor:'#C10F1F', borderWidth:1.5, borderDash:[2,4], pointRadius:0, tension:0.3, fill:false }
+      ]},
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{ callback: v => '$'+v.toFixed(0) }, grid:{ color:'rgba(0,0,0,0.05)' } }, x:{ grid:{ display:false }, ticks:{ maxRotation:45, autoSkip:false, font:{size:9} } } } }
+    });
+  }
+
+  // Volume chart
+  if(document.getElementById('chartVol')) {
+    charts.vol = new Chart(document.getElementById('chartVol'), {
+      type: 'bar',
+      data: { labels, datasets: [{ label:'Volume', data: d.map(r=>+(r.volume/1e6).toFixed(1)), backgroundColor: d.map(r => r.volume > 80000000 ? '#7B38D8' : '#B5D4F4') }] },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{ callback: v => v+'M', font:{size:10} }, grid:{ color:'rgba(0,0,0,0.05)' } }, x:{ grid:{ display:false }, ticks:{ maxRotation:45, autoSkip:false, font:{size:9} } } } }
+    });
+  }
+
+  // Distribution
+  if(document.getElementById('chartDist')) {
+    const buckets = ['<-3%','-3 to -2','-2 to -1','-1 to 0','0 to 1','1 to 2','2 to 3','>3%'];
+    const counts = [0,0,0,0,0,0,0,0];
+    d.slice(1).forEach(r => {
+      const v = r.daily_return;
+      if(v<-3)counts[0]++; else if(v<-2)counts[1]++; else if(v<-1)counts[2]++; else if(v<0)counts[3]++;
+      else if(v<1)counts[4]++; else if(v<2)counts[5]++; else if(v<3)counts[6]++; else counts[7]++;
+    });
+    charts.dist = new Chart(document.getElementById('chartDist'), {
+      type:'bar',
+      data:{ labels:buckets, datasets:[{ data:counts, backgroundColor: counts.map((_,i)=>i<4?'#FECACA':'#BBF7D0'), borderColor: counts.map((_,i)=>i<4?'#C10F1F':'#107C10'), borderWidth:1 }] },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ ticks:{stepSize:1, font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'} }, y:{ grid:{display:false}, ticks:{font:{size:9}} } } }
+    });
+  }
+
+  // Volatility
+  if(document.getElementById('chartVix')) {
+    charts.vix = new Chart(document.getElementById('chartVix'), {
+      type:'line',
+      data:{ labels, datasets:[{ label:'Volatility', data:d.map(r=>r.volatility), borderColor:'#7B38D8', borderWidth:2, fill:true, backgroundColor:'rgba(123,56,216,0.1)', pointRadius:3, pointBackgroundColor:'#7B38D8', tension:0.3 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v.toFixed(1)+'%', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'} }, x:{ grid:{display:false}, ticks:{maxRotation:45, autoSkip:false, font:{size:9}} } } }
+    });
+  }
+
+  // Returns
+  if(document.getElementById('chartRet')) {
+    charts.ret = new Chart(document.getElementById('chartRet'), {
+      type:'bar',
+      data:{ labels, datasets:[{ label:'Daily Return %', data:d.map(r=>r.daily_return), backgroundColor:d.map(r=>r.daily_return>=0?'#BBF7D0':'#FECACA'), borderColor:d.map(r=>r.daily_return>=0?'#107C10':'#C10F1F'), borderWidth:1 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v.toFixed(1)+'%', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'} }, x:{ grid:{display:false}, ticks:{maxRotation:45, autoSkip:false, font:{size:9}} } } }
+    });
+  }
+
+  // Range
+  if(document.getElementById('chartRange')) {
+    charts.range = new Chart(document.getElementById('chartRange'), {
+      type:'bar',
+      data:{ labels, datasets:[{ label:'Range $', data:d.map(r=>+r.daily_range.toFixed(2)), backgroundColor:'#BFDBFE', borderColor:'#118DFF', borderWidth:1 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>'$'+v.toFixed(1), font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'} }, x:{ grid:{display:false}, ticks:{maxRotation:45, autoSkip:false, font:{size:9}} } } }
+    });
+  }
+
+  // OHLC
+  if(document.getElementById('chartOHLC')) {
+    charts.ohlc = new Chart(document.getElementById('chartOHLC'), {
+      type:'bar',
+      data:{ labels, datasets:[
+        { label:'Open',  data:d.map(r=>r.open),  backgroundColor:'rgba(17,141,255,0.7)' },
+        { label:'High',  data:d.map(r=>r.high),  backgroundColor:'rgba(16,124,16,0.7)' },
+        { label:'Low',   data:d.map(r=>r.low),   backgroundColor:'rgba(193,15,31,0.7)' },
+        { label:'Close', data:d.map(r=>r.close), backgroundColor:'rgba(18,35,158,0.7)' }
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true, position:'top', labels:{ boxWidth:10, font:{size:10} } } }, scales:{ y:{ ticks:{callback:v=>'$'+v, font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'} }, x:{ grid:{display:false}, ticks:{maxRotation:45, autoSkip:true, maxTicksLimit:10, font:{size:9}} } } }
+    });
+  }
+
+  // Scatter
+  if(document.getElementById('chartScatter')) {
+    charts.scatter = new Chart(document.getElementById('chartScatter'), {
+      type:'bubble',
+      data:{ datasets:[{ label:'Session', data: d.slice(1).map(r=>({ x: +(r.volume/1e6).toFixed(1), y: +Math.abs(r.daily_return).toFixed(2), r: Math.max(4, r.daily_range * 1.2) })), backgroundColor: d.slice(1).map(r=>r.daily_return>=0?'rgba(16,124,16,0.5)':'rgba(193,15,31,0.5)'), borderColor: d.slice(1).map(r=>r.daily_return>=0?'#107C10':'#C10F1F'), borderWidth:1 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ title:{display:true, text:'Volume (M)', font:{size:10}}, ticks:{callback:v=>v+'M', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'} }, y:{ title:{display:true, text:'Abs Return %', font:{size:10}}, ticks:{callback:v=>v+'%', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'} } } }
+    });
+  }
+
+  // Top table
+  const tbody = document.getElementById('topTableBody');
+  if(tbody) {
+    const sorted = [...d].sort((a,b)=>b.volume-a.volume).slice(0,8);
+    tbody.innerHTML = sorted.map(r => `
+      <tr>
+        <td>${r.date}</td>
+        <td><strong>$${r.close.toFixed(2)}</strong></td>
+        <td>${(r.volume/1e6).toFixed(1)}M</td>
+        <td><span class="badge ${r.daily_return>=0?'badge-up':'badge-down'}">${r.daily_return>=0?'+':''}${r.daily_return.toFixed(2)}%</span></td>
+        <td><span class="badge ${r.volume>80000000?'badge-high':'badge-normal'}">${r.volume>80000000?'High Vol':'Normal'}</span></td>
+      </tr>`).join('');
+  }
+
+  // Update KPIs
+  updateKPIs(d);
+}
+
+function updateKPIs(d) {
+  const closes = d.map(r=>r.close);
+  const highs = d.map(r=>r.high);
+  const lows = d.map(r=>r.low);
+  const vols = d.map(r=>r.volume);
+  const returns = d.slice(1).map(r=>r.daily_return);
+  const lastClose = closes[closes.length-1];
+  const firstClose = closes[0];
+  const totalRet = ((lastClose-firstClose)/firstClose*100).toFixed(2);
+  const pos = returns.filter(v=>v>0).length;
+  const neg = returns.filter(v=>v<0).length;
+  const avgVol = (vols.reduce((a,b)=>a+b,0)/vols.length/1e6).toFixed(1);
+  const lastRet = d[d.length-1].daily_return;
+
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('kpiClose','$'+lastClose.toFixed(2));
+  set('kpiCloseD', (lastRet>=0?'▲ +':'▼ ')+Math.abs(lastRet).toFixed(3)+'% last session');
+  set('kpiReturn',(+totalRet>=0?'+':'')+totalRet+'%');
+  set('kpiReturnD','↑ $'+firstClose.toFixed(2)+' → $'+lastClose.toFixed(2));
+  set('kpiHigh','$'+Math.max(...highs).toFixed(2));
+  set('kpiLow','$'+Math.min(...lows).toFixed(2));
+  set('kpiVol',avgVol+'M');
+  set('kpiBull',pos+' / '+neg);
+  set('kpiBullD',(pos/(pos+neg)*100).toFixed(0)+'% positive sessions');
+}
+
+function applyFilters() {
+  const dateFilter = document.getElementById('filterDate').value;
+  const minVol = +document.getElementById('filterVol').value * 1e6;
+  const showPos = document.getElementById('slicerPos').checked;
+  const showNeg = document.getElementById('slicerNeg').checked;
+  const showHigh = document.getElementById('slicerHigh').checked;
+
+  filtered = DATA.filter(r => {
+    const m = +r.date.slice(5,7);
+    if(dateFilter==='jan' && m!==1) return false;
+    if(dateFilter==='feb' && m!==2) return false;
+    if(dateFilter==='q1' && m>3) return false;
+    if(dateFilter==='q2' && (m<4||m>6)) return false;
+    if(dateFilter==='q3q4' && m<7) return false;
+    if(r.volume < minVol) return false;
+    if(!showHigh && r.volume > 80000000) return false;
+    if(!showPos && r.daily_return > 0) return false;
+    if(!showNeg && r.daily_return < 0) return false;
+    return true;
+  });
+  buildAllCharts(filtered);
+}
+
+function resetFilters() {
+  document.getElementById('filterDate').value = 'all';
+  document.getElementById('filterVol').value = 30;
+  document.getElementById('volVal').textContent = '30M';
+  document.getElementById('slicerPos').checked = true;
+  document.getElementById('slicerNeg').checked = true;
+  document.getElementById('slicerHigh').checked = true;
+  filtered = [...DATA];
+  buildAllCharts(filtered);
+}
+
+function switchPage(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  el.classList.add('active');
+  setTimeout(() => buildAllCharts(filtered), 50);
+}
+
+// Init
+buildAllCharts(DATA);
+</script>
+
+
+</body></html>
