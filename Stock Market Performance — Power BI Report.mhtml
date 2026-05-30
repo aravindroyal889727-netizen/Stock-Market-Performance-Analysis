@@ -1,0 +1,711 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: file:///C:/Users/aravi/Downloads/Stock_PowerBI_Dashboard.html
+Subject: =?utf-8?Q?Stock=20Market=20Performance=20=E2=80=94=20Power=20BI=20Report?=
+Date: Sat, 30 May 2026 21:40:51 +0530
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--RjP9wSu6iZPfOkXdRU92n4kJf4wEOlKIvdH3fZmgEw----"
+
+
+------MultipartBoundary--RjP9wSu6iZPfOkXdRU92n4kJf4wEOlKIvdH3fZmgEw----
+Content-Type: text/html
+Content-ID: <frame-A29F7F8B3EBE73E16C2C3A5786F5EDAF@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: file:///C:/Users/aravi/Downloads/Stock_PowerBI_Dashboard.html
+
+<!DOCTYPE html><html lang=3D"en"><head><meta http-equiv=3D"Content-Type" co=
+ntent=3D"text/html; charset=3DUTF-8"><link rel=3D"stylesheet" type=3D"text/=
+css" href=3D"cid:css-fa1e95fc-aa25-493a-9670-188dbe03599d@mhtml.blink" />
+
+<meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D1.=
+0">
+<title>Stock Market Performance =E2=80=94 Power BI Report</title>
+
+
+</head>
+<body>
+
+<!-- Top bar -->
+<div class=3D"topbar">
+  <div class=3D"topbar-logo">
+    <svg viewBox=3D"0 0 32 32" fill=3D"none">
+      <rect width=3D"32" height=3D"32" rx=3D"4" fill=3D"#F2C811"></rect>
+      <rect x=3D"5" y=3D"18" width=3D"5" height=3D"9" fill=3D"#1A1A2E"></re=
+ct>
+      <rect x=3D"13" y=3D"11" width=3D"5" height=3D"16" fill=3D"#1A1A2E"></=
+rect>
+      <rect x=3D"21" y=3D"5" width=3D"5" height=3D"22" fill=3D"#1A1A2E"></r=
+ect>
+    </svg>
+    <span><b>Power</b>BI</span>
+  </div>
+  <div class=3D"topbar-nav">
+    <a class=3D"active">File</a>
+    <a>Home</a>
+    <a>Insert</a>
+    <a>Modeling</a>
+    <a>View</a>
+    <a>Help</a>
+  </div>
+  <div class=3D"topbar-right">
+    <span>Stock_Market_Performance_Analysis.pbix</span>
+    <span class=3D"pbi-badge">REPORT VIEW</span>
+  </div>
+</div>
+
+<div class=3D"report-wrap">
+
+  <!-- Filter panel -->
+  <div class=3D"filter-panel">
+    <div class=3D"filter-section">
+      <h3>Filters</h3>
+      <label>Date Range</label>
+      <select id=3D"filterDate">
+        <option value=3D"all">All Periods</option>
+        <option value=3D"jan">January 2026</option>
+        <option value=3D"feb">February 2026</option>
+        <option value=3D"q1">Q1 2026</option>
+        <option value=3D"q2">Q2 2026</option>
+        <option value=3D"q3q4">Q3=E2=80=93Q4 2026</option>
+      </select>
+    </div>
+
+    <div class=3D"filter-section">
+      <label>Min Volume (M shares)</label>
+      <input type=3D"range" id=3D"filterVol" min=3D"30" max=3D"92" value=3D=
+"30" step=3D"1">
+      <div class=3D"range-val" id=3D"volVal">30M</div>
+    </div>
+
+    <div class=3D"filter-section">
+      <label>Return Type</label>
+      <div class=3D"slicer-list">
+        <label class=3D"slicer-item checked"><input type=3D"checkbox" id=3D=
+"slicerPos" checked=3D""> Positive days</label>
+        <label class=3D"slicer-item checked"><input type=3D"checkbox" id=3D=
+"slicerNeg" checked=3D""> Negative days</label>
+        <label class=3D"slicer-item checked"><input type=3D"checkbox" id=3D=
+"slicerHigh" checked=3D""> High volume (&gt;80M)</label>
+      </div>
+    </div>
+
+    <div class=3D"filter-section">
+      <button class=3D"filter-btn">=E2=96=B6 Apply Filters</button>
+      <button class=3D"filter-reset">=E2=86=BB Reset All</button>
+    </div>
+
+    <div class=3D"filter-section" style=3D"margin-top:10px; border-top:1px =
+solid rgba(255,255,255,0.08); padding-top:18px;">
+      <h3>Fields</h3>
+      <div style=3D"color:rgba(255,255,255,0.5);font-size:10px;line-height:=
+1.8;">
+        =F0=9F=93=81 StockData<br>
+        &nbsp;&nbsp;=F0=9F=93=85 Date<br>
+        &nbsp;&nbsp;=F0=9F=92=B2 Close<br>
+        &nbsp;&nbsp;=F0=9F=92=B2 Open / High / Low<br>
+        &nbsp;&nbsp;=F0=9F=93=8A Volume<br>
+        &nbsp;&nbsp;=F0=9F=93=88 Daily_Return<br>
+        &nbsp;&nbsp;=E3=80=B0 MA5 / MA10<br>
+        &nbsp;&nbsp;=E2=9A=A1 Volatility<br>
+        &nbsp;&nbsp;=E2=86=94 Daily_Range
+      </div>
+    </div>
+  </div>
+
+  <!-- Main canvas -->
+  <div class=3D"canvas">
+
+    <!-- Page tabs -->
+    <div class=3D"page-tabs">
+      <div class=3D"page-tab active">=F0=9F=93=8A Executive Overview</div>
+      <div class=3D"page-tab">=E2=9A=A1 Risk &amp; Volatility</div>
+      <div class=3D"page-tab">=F0=9F=94=8D Trading Intelligence</div>
+    </div>
+
+    <!-- PAGE 1: OVERVIEW -->
+    <div class=3D"page active" id=3D"page-overview">
+      <div class=3D"report-header">
+        <div>
+          <h1>Stock Market Performance Analysis</h1>
+          <p>Analysis Period: Jan 21, 2026 =E2=80=93 Dec 2, 2026 &nbsp;=C2=
+=B7&nbsp; 22 Trading Sessions &nbsp;=C2=B7&nbsp; Data cleaned &amp; verifie=
+d</p>
+        </div>
+        <div class=3D"report-header-badge">LIVE REPORT</div>
+      </div>
+
+      <div class=3D"kpi-row">
+        <div class=3D"kpi-card green">
+          <div class=3D"kpi-label">Latest Close</div>
+          <div class=3D"kpi-value" id=3D"kpiClose">$261.73</div>
+          <div class=3D"kpi-delta down" id=3D"kpiCloseD">=E2=96=BC 4.998% l=
+ast session</div>
+        </div>
+        <div class=3D"kpi-card green">
+          <div class=3D"kpi-label">Total Return</div>
+          <div class=3D"kpi-value" id=3D"kpiReturn">+5.69%</div>
+          <div class=3D"kpi-delta up" id=3D"kpiReturnD">=E2=86=91 $247.65 =
+=E2=86=92 $261.73</div>
+        </div>
+        <div class=3D"kpi-card">
+          <div class=3D"kpi-label">Period High</div>
+          <div class=3D"kpi-value" id=3D"kpiHigh">$280.90</div>
+          <div class=3D"kpi-delta neutral" id=3D"kpiHighD">Jun 2 intraday</=
+div>
+        </div>
+        <div class=3D"kpi-card red">
+          <div class=3D"kpi-label">Period Low</div>
+          <div class=3D"kpi-value" id=3D"kpiLow">$244.68</div>
+          <div class=3D"kpi-delta neutral" id=3D"kpiLowD">Jan 23 intraday</=
+div>
+        </div>
+        <div class=3D"kpi-card purple">
+          <div class=3D"kpi-label">Avg Daily Volume</div>
+          <div class=3D"kpi-value" id=3D"kpiVol">54.9M</div>
+          <div class=3D"kpi-delta neutral" id=3D"kpiVolD">shares per sessio=
+n</div>
+        </div>
+        <div class=3D"kpi-card yellow">
+          <div class=3D"kpi-label">Bull / Bear Days</div>
+          <div class=3D"kpi-value" id=3D"kpiBull">13 / 8</div>
+          <div class=3D"kpi-delta up" id=3D"kpiBullD">62% positive sessions=
+</div>
+        </div>
+      </div>
+
+      <div class=3D"chart-row cols-full">
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">Price Trend =E2=80=94 Close w=
+ith MA5 &amp; MA10</div>
+              <div class=3D"chart-card-sub">Line chart =C2=B7 Closing price=
+ vs moving averages over analysis period</div>
+            </div>
+            <span class=3D"chart-ellipsis">=E2=8B=AF</span>
+          </div>
+          <div class=3D"legend-row">
+            <div class=3D"legend-item"><div class=3D"legend-line" style=3D"=
+background:#118DFF"></div> Close Price</div>
+            <div class=3D"legend-item"><div class=3D"legend-line" style=3D"=
+background:#107C10;border-top:2px dashed #107C10;background:none;border-bot=
+tom:none"></div> MA5</div>
+            <div class=3D"legend-item"><div class=3D"legend-line" style=3D"=
+background:#C10F1F;"></div> MA10</div>
+          </div>
+          <div style=3D"position:relative;height:220px;"><canvas id=3D"char=
+tPrice" role=3D"img" aria-label=3D"Line chart of stock closing price with M=
+A5 and MA10 overlays from January to December 2026" width=3D"1481" height=
+=3D"275" style=3D"display: block; box-sizing: border-box; height: 220px; wi=
+dth: 1185px;"></canvas></div>
+        </div>
+      </div>
+
+      <div class=3D"chart-row cols-2">
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">Trading Volume by Session</di=
+v>
+              <div class=3D"chart-card-sub">Bar chart =C2=B7 Purple =3D hig=
+h volume (&gt;80M shares)</div>
+            </div>
+            <span class=3D"chart-ellipsis">=E2=8B=AF</span>
+          </div>
+          <div style=3D"position:relative;height:180px;"><canvas id=3D"char=
+tVol" role=3D"img" aria-label=3D"Bar chart of daily trading volume per sess=
+ion" width=3D"862" height=3D"225" style=3D"display: block; box-sizing: bord=
+er-box; height: 180px; width: 690px;"></canvas></div>
+        </div>
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">Return Distribution</div>
+              <div class=3D"chart-card-sub">Histogram =C2=B7 Days by return=
+ bucket</div>
+            </div>
+            <span class=3D"chart-ellipsis">=E2=8B=AF</span>
+          </div>
+          <div style=3D"position:relative;height:180px;"><canvas id=3D"char=
+tDist" role=3D"img" aria-label=3D"Histogram of daily return distribution bu=
+cketed by 1% intervals" width=3D"561" height=3D"225" style=3D"display: bloc=
+k; box-sizing: border-box; height: 180px; width: 449px;"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: RISK -->
+    <div class=3D"page" id=3D"page-risk">
+      <div class=3D"report-header" style=3D"background:linear-gradient(135d=
+eg,#7B38D8,#C10F1F)">
+        <div>
+          <h1>Risk &amp; Volatility Analysis</h1>
+          <p>5-day rolling volatility =C2=B7 Daily return swings =C2=B7 Pri=
+ce range analysis</p>
+        </div>
+        <div class=3D"report-header-badge">RISK REPORT</div>
+      </div>
+
+      <div class=3D"kpi-row">
+        <div class=3D"kpi-card red">
+          <div class=3D"kpi-label">Best Day</div>
+          <div class=3D"kpi-value">+4.06%</div>
+          <div class=3D"kpi-delta up">Feb 2, 2026</div>
+        </div>
+        <div class=3D"kpi-card red">
+          <div class=3D"kpi-label">Worst Day</div>
+          <div class=3D"kpi-value">=E2=88=925.27%</div>
+          <div class=3D"kpi-delta down">Feb 13, 2026</div>
+        </div>
+        <div class=3D"kpi-card">
+          <div class=3D"kpi-label">Avg Daily Return</div>
+          <div class=3D"kpi-value">+0.29%</div>
+          <div class=3D"kpi-delta up">Slight bullish bias</div>
+        </div>
+        <div class=3D"kpi-card red">
+          <div class=3D"kpi-label">Peak Volatility</div>
+          <div class=3D"kpi-value">3.75%</div>
+          <div class=3D"kpi-delta neutral">Feb 19</div>
+        </div>
+        <div class=3D"kpi-card">
+          <div class=3D"kpi-label">Avg Daily Range</div>
+          <div class=3D"kpi-value">$6.21</div>
+          <div class=3D"kpi-delta neutral">High=E2=80=93Low spread</div>
+        </div>
+        <div class=3D"kpi-card yellow">
+          <div class=3D"kpi-label">Max Range Day</div>
+          <div class=3D"kpi-value">$15.54</div>
+          <div class=3D"kpi-delta neutral">Dec 2, 2026</div>
+        </div>
+      </div>
+
+      <div class=3D"chart-row cols-full">
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">5-Day Rolling Volatility</div=
+>
+              <div class=3D"chart-card-sub">Area chart =C2=B7 Standard devi=
+ation of returns over rolling 5-session window</div>
+            </div>
+            <span class=3D"chart-ellipsis">=E2=8B=AF</span>
+          </div>
+          <div style=3D"position:relative;height:200px;"><canvas id=3D"char=
+tVix" role=3D"img" aria-label=3D"Area chart of 5-day rolling volatility. Pe=
+aked in February at 3.75%." height=3D"0" style=3D"display: block; box-sizin=
+g: border-box; height: 0px; width: 0px;" width=3D"0"></canvas></div>
+        </div>
+      </div>
+
+      <div class=3D"chart-row cols-2">
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">Daily Returns (%)</div>
+              <div class=3D"chart-card-sub">Bar chart =C2=B7 Green =3D posi=
+tive =C2=B7 Red =3D negative</div>
+            </div>
+          </div>
+          <div style=3D"position:relative;height:180px;"><canvas id=3D"char=
+tRet" role=3D"img" aria-label=3D"Bar chart of daily return percentages, col=
+or coded green for positive and red for negative." height=3D"0" style=3D"di=
+splay: block; box-sizing: border-box; height: 0px; width: 0px;" width=3D"0"=
+></canvas></div>
+        </div>
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">Daily Price Range (High =E2=
+=88=92 Low)</div>
+              <div class=3D"chart-card-sub">Bar chart =C2=B7 Intraday sprea=
+d per session</div>
+            </div>
+          </div>
+          <div style=3D"position:relative;height:180px;"><canvas id=3D"char=
+tRange" role=3D"img" aria-label=3D"Bar chart of daily high minus low price =
+range per session." height=3D"0" style=3D"display: block; box-sizing: borde=
+r-box; height: 0px; width: 0px;" width=3D"0"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: TRADING -->
+    <div class=3D"page" id=3D"page-trading">
+      <div class=3D"report-header" style=3D"background:linear-gradient(135d=
+eg,#0F6E56,#118DFF)">
+        <div>
+          <h1>Trading Intelligence</h1>
+          <p>OHLC breakdown =C2=B7 Volume vs return correlation =C2=B7 Sess=
+ion detail table</p>
+        </div>
+        <div class=3D"report-header-badge">INTELLIGENCE</div>
+      </div>
+
+      <div class=3D"chart-row cols-full">
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">OHLC =E2=80=94 Open, High, Lo=
+w, Close per Session</div>
+              <div class=3D"chart-card-sub">Grouped bar =C2=B7 Blue =3D Ope=
+n, Teal =3D High, Coral =3D Low, Navy =3D Close</div>
+            </div>
+          </div>
+          <div style=3D"position:relative;height:220px;"><canvas id=3D"char=
+tOHLC" role=3D"img" aria-label=3D"Grouped bar chart showing Open, High, Low=
+, Close prices per trading session." height=3D"0" style=3D"display: block; =
+box-sizing: border-box; height: 0px; width: 0px;" width=3D"0"></canvas></di=
+v>
+        </div>
+      </div>
+
+      <div class=3D"chart-row cols-2">
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">Volume vs Absolute Return (Sc=
+atter)</div>
+              <div class=3D"chart-card-sub">Each bubble =3D one session =C2=
+=B7 Bubble size =3D daily range</div>
+            </div>
+          </div>
+          <div style=3D"position:relative;height:200px;"><canvas id=3D"char=
+tScatter" role=3D"img" aria-label=3D"Scatter chart plotting trading volume =
+against absolute daily return. Larger bubbles indicate wider price ranges."=
+ height=3D"0" style=3D"display: block; box-sizing: border-box; height: 0px;=
+ width: 0px;" width=3D"0"></canvas></div>
+        </div>
+        <div class=3D"chart-card">
+          <div class=3D"chart-card-header">
+            <div>
+              <div class=3D"chart-card-title">Top Sessions by Volume</div>
+              <div class=3D"chart-card-sub">Table =C2=B7 Filtered to highes=
+t activity days</div>
+            </div>
+          </div>
+          <div style=3D"overflow-x:auto;">
+            <table class=3D"pbi-table" id=3D"topTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Close</th>
+                  <th>Volume</th>
+                  <th>Return</th>
+                  <th>Signal</th>
+                </tr>
+              </thead>
+              <tbody id=3D"topTableBody">
+      <tr>
+        <td>2026-01-30</td>
+        <td><strong>$259.48</strong></td>
+        <td>92.4M</td>
+        <td><span class=3D"badge badge-up">+0.47%</span></td>
+        <td><span class=3D"badge badge-high">High Vol</span></td>
+      </tr>
+      <tr>
+        <td>2026-04-02</td>
+        <td><strong>$276.49</strong></td>
+        <td>90.5M</td>
+        <td><span class=3D"badge badge-up">+2.60%</span></td>
+        <td><span class=3D"badge badge-high">High Vol</span></td>
+      </tr>
+      <tr>
+        <td>2026-12-02</td>
+        <td><strong>$261.73</strong></td>
+        <td>81.1M</td>
+        <td><span class=3D"badge badge-down">-5.00%</span></td>
+        <td><span class=3D"badge badge-high">High Vol</span></td>
+      </tr>
+      <tr>
+        <td>2026-02-02</td>
+        <td><strong>$270.01</strong></td>
+        <td>73.9M</td>
+        <td><span class=3D"badge badge-up">+4.06%</span></td>
+        <td><span class=3D"badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-01-29</td>
+        <td><strong>$258.28</strong></td>
+        <td>67.3M</td>
+        <td><span class=3D"badge badge-up">+0.72%</span></td>
+        <td><span class=3D"badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-03-02</td>
+        <td><strong>$269.48</strong></td>
+        <td>64.4M</td>
+        <td><span class=3D"badge badge-up">+1.85%</span></td>
+        <td><span class=3D"badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-02-17</td>
+        <td><strong>$263.88</strong></td>
+        <td>58.5M</td>
+        <td><span class=3D"badge badge-up">+3.17%</span></td>
+        <td><span class=3D"badge badge-normal">Normal</span></td>
+      </tr>
+      <tr>
+        <td>2026-02-13</td>
+        <td><strong>$255.78</strong></td>
+        <td>56.3M</td>
+        <td><span class=3D"badge badge-down">-5.27%</span></td>
+        <td><span class=3D"badge badge-normal">Normal</span></td>
+      </tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /canvas -->
+</div><!-- /report-wrap -->
+
+<div class=3D"pbi-watermark">Microsoft Power BI &nbsp;=C2=B7&nbsp; Stock An=
+alysis Report</div>
+
+
+
+
+</body></html>
+------MultipartBoundary--RjP9wSu6iZPfOkXdRU92n4kJf4wEOlKIvdH3fZmgEw----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-fa1e95fc-aa25-493a-9670-188dbe03599d@mhtml.blink
+
+@charset "utf-8";
+
+:root { --pbi-yellow: #F2C811; --pbi-dark: #1A1A2E; --pbi-panel: #FFFFFF; -=
+-pbi-sidebar: #252540; --pbi-accent: #118DFF; --pbi-accent2: #12239E; --pbi=
+-green: #107C10; --pbi-red: #C10F1F; --pbi-border: #E5E7EB; --pbi-bg: #F3F4=
+F7; --pbi-text: #1F2937; --pbi-muted: #6B7280; --pbi-card: #FFFFFF; }
+
+* { box-sizing: border-box; margin: 0px; padding: 0px; }
+
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--pb=
+i-bg); color: var(--pbi-text); min-height: 100vh; }
+
+.topbar { background: var(--pbi-dark); height: 44px; display: flex; align-i=
+tems: center; padding: 0px 18px; gap: 20px; position: sticky; top: 0px; z-i=
+ndex: 100; border-bottom: 3px solid var(--pbi-yellow); }
+
+.topbar-logo { display: flex; align-items: center; gap: 8px; }
+
+.topbar-logo svg { width: 22px; height: 22px; }
+
+.topbar-logo span { color: rgb(255, 255, 255); font-size: 15px; font-weight=
+: 600; letter-spacing: 0.01em; }
+
+.topbar-logo span b { color: var(--pbi-yellow); }
+
+.topbar-nav { display: flex; gap: 2px; margin-left: 24px; }
+
+.topbar-nav a { color: rgba(255, 255, 255, 0.7); font-size: 12px; padding: =
+4px 12px; border-radius: 3px; cursor: pointer; text-decoration: none; trans=
+ition: 0.15s; }
+
+.topbar-nav a:hover, .topbar-nav a.active { background: rgba(255, 255, 255,=
+ 0.12); color: rgb(255, 255, 255); }
+
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap:=
+ 12px; }
+
+.topbar-right span { color: rgba(255, 255, 255, 0.6); font-size: 11px; }
+
+.pbi-badge { background: var(--pbi-yellow); color: rgb(26, 26, 46); font-si=
+ze: 10px; font-weight: 700; padding: 2px 7px; border-radius: 3px; letter-sp=
+acing: 0.05em; }
+
+.report-wrap { display: flex; height: calc(-44px + 100vh); }
+
+.filter-panel { width: 220px; background: var(--pbi-sidebar); flex-shrink: =
+0; padding: 16px 14px; overflow-y: auto; border-right: 1px solid rgba(255, =
+255, 255, 0.06); }
+
+.filter-panel h3 { color: rgba(255, 255, 255, 0.5); font-size: 10px; font-w=
+eight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom=
+: 14px; }
+
+.filter-section { margin-bottom: 22px; }
+
+.filter-section label { display: block; color: rgba(255, 255, 255, 0.85); f=
+ont-size: 11px; font-weight: 500; margin-bottom: 6px; }
+
+.filter-section select, .filter-section input[type=3D"range"] { width: 100%=
+; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 2=
+55, 0.12); color: rgb(255, 255, 255); border-radius: 4px; font-size: 11px; =
+padding: 5px 8px; cursor: pointer; }
+
+.filter-section select option { background: rgb(37, 37, 64); }
+
+.filter-section input[type=3D"range"] { padding: 2px 0px; cursor: pointer; =
+accent-color: var(--pbi-yellow); }
+
+.range-val { color: var(--pbi-yellow); font-size: 11px; font-weight: 600; t=
+ext-align: right; margin-top: 3px; }
+
+.filter-btn { width: 100%; background: var(--pbi-yellow); color: var(--pbi-=
+dark); border-width: medium; border-style: none; border-color: currentcolor=
+; border-image: initial; border-radius: 4px; padding: 7px; font-size: 11px;=
+ font-weight: 700; cursor: pointer; margin-top: 4px; transition: opacity 0.=
+15s; }
+
+.filter-btn:hover { opacity: 0.88; }
+
+.filter-reset { width: 100%; background: transparent; color: rgba(255, 255,=
+ 255, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 4px=
+; padding: 6px; font-size: 11px; cursor: pointer; margin-top: 6px; transiti=
+on: 0.15s; }
+
+.filter-reset:hover { border-color: rgba(255, 255, 255, 0.4); color: rgba(2=
+55, 255, 255, 0.8); }
+
+.slicer-list { display: flex; flex-direction: column; gap: 5px; }
+
+.slicer-item { display: flex; align-items: center; gap: 7px; color: rgba(25=
+5, 255, 255, 0.75); font-size: 11px; cursor: pointer; padding: 4px 6px; bor=
+der-radius: 3px; transition: background 0.12s; user-select: none; }
+
+.slicer-item:hover { background: rgba(255, 255, 255, 0.07); }
+
+.slicer-item input[type=3D"checkbox"] { accent-color: var(--pbi-yellow); cu=
+rsor: pointer; }
+
+.slicer-item.checked { color: rgb(255, 255, 255); }
+
+.canvas { flex: 1 1 0%; overflow-y: auto; padding: 16px 18px; background: v=
+ar(--pbi-bg); }
+
+.page-tabs { display: flex; gap: 2px; margin-bottom: 16px; background: rgb(=
+255, 255, 255); padding: 0px 12px; border-radius: 6px 6px 0px 0px; border: =
+1px solid var(--pbi-border); }
+
+.page-tab { padding: 9px 18px; font-size: 12px; font-weight: 500; cursor: p=
+ointer; color: var(--pbi-muted); border-bottom: 3px solid transparent; tran=
+sition: 0.15s; margin-bottom: -1px; }
+
+.page-tab:hover { color: var(--pbi-accent); }
+
+.page-tab.active { color: var(--pbi-accent2); border-bottom-color: var(--pb=
+i-accent2); }
+
+.report-header { background: linear-gradient(135deg, var(--pbi-accent2) 0%,=
+ var(--pbi-accent) 100%); border-radius: 6px; padding: 16px 20px; margin-bo=
+ttom: 14px; display: flex; align-items: center; justify-content: space-betw=
+een; }
+
+.report-header h1 { color: rgb(255, 255, 255); font-size: 18px; font-weight=
+: 600; }
+
+.report-header p { color: rgba(255, 255, 255, 0.75); font-size: 11px; margi=
+n-top: 2px; }
+
+.report-header-badge { background: rgba(255, 255, 255, 0.15); color: rgb(25=
+5, 255, 255); font-size: 10px; padding: 3px 10px; border-radius: 20px; font=
+-weight: 600; letter-spacing: 0.05em; }
+
+.kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;=
+ margin-bottom: 14px; }
+
+.kpi-card { background: var(--pbi-card); border-radius: 6px; border: 1px so=
+lid var(--pbi-border); padding: 12px 14px; position: relative; overflow: hi=
+dden; }
+
+.kpi-card::before { content: ""; position: absolute; left: 0px; top: 0px; b=
+ottom: 0px; width: 4px; background: var(--pbi-accent); border-radius: 6px 0=
+px 0px 6px; }
+
+.kpi-card.green::before { background: var(--pbi-green); }
+
+.kpi-card.red::before { background: var(--pbi-red); }
+
+.kpi-card.yellow::before { background: var(--pbi-yellow); }
+
+.kpi-card.purple::before { background: rgb(123, 56, 216); }
+
+.kpi-label { font-size: 10px; color: var(--pbi-muted); font-weight: 600; te=
+xt-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+
+.kpi-value { font-size: 22px; font-weight: 700; color: var(--pbi-text); lin=
+e-height: 1; }
+
+.kpi-delta { font-size: 10px; margin-top: 4px; font-weight: 600; }
+
+.kpi-delta.up { color: var(--pbi-green); }
+
+.kpi-delta.down { color: var(--pbi-red); }
+
+.kpi-delta.neutral { color: var(--pbi-muted); }
+
+.chart-row { display: grid; gap: 12px; margin-bottom: 12px; }
+
+.chart-row.cols-2 { grid-template-columns: 3fr 2fr; }
+
+.chart-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.chart-row.cols-full { grid-template-columns: 1fr; }
+
+.chart-card { background: var(--pbi-card); border-radius: 6px; border: 1px =
+solid var(--pbi-border); padding: 14px 16px; position: relative; }
+
+.chart-card-header { display: flex; align-items: flex-start; justify-conten=
+t: space-between; margin-bottom: 12px; }
+
+.chart-card-title { font-size: 12px; font-weight: 600; color: var(--pbi-tex=
+t); }
+
+.chart-card-sub { font-size: 10px; color: var(--pbi-muted); margin-top: 1px=
+; }
+
+.chart-ellipsis { font-size: 16px; color: var(--pbi-muted); cursor: pointer=
+; line-height: 1; }
+
+.legend-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10p=
+x; }
+
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 10p=
+x; color: var(--pbi-muted); }
+
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0=
+; }
+
+.legend-line { width: 18px; height: 3px; border-radius: 2px; flex-shrink: 0=
+; }
+
+.pbi-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+
+.pbi-table thead th { background: rgb(248, 249, 250); font-weight: 600; col=
+or: var(--pbi-muted); text-align: left; padding: 8px 10px; border-bottom: 2=
+px solid var(--pbi-border); font-size: 10px; text-transform: uppercase; let=
+ter-spacing: 0.05em; }
+
+.pbi-table tbody td { padding: 7px 10px; border-bottom: 1px solid rgb(243, =
+244, 247); color: var(--pbi-text); }
+
+.pbi-table tbody tr:hover { background: rgb(248, 249, 251); }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-=
+size: 10px; font-weight: 700; }
+
+.badge-up { background: rgb(220, 252, 231); color: rgb(22, 101, 52); }
+
+.badge-down { background: rgb(254, 226, 226); color: rgb(153, 27, 27); }
+
+.badge-high { background: rgb(237, 233, 254); color: rgb(91, 33, 182); }
+
+.badge-normal { background: rgb(241, 245, 249); color: rgb(71, 85, 105); }
+
+.page { display: none; }
+
+.page.active { display: block; }
+
+.pbi-watermark { position: fixed; bottom: 12px; right: 18px; font-size: 10p=
+x; color: rgba(0, 0, 0, 0.25); font-weight: 600; letter-spacing: 0.08em; po=
+inter-events: none; }
+
+@media print {
+  .topbar, .filter-panel, .page-tabs { display: none !important; }
+  .canvas { overflow: visible; height: auto; }
+  .chart-card { break-inside: avoid; }
+}
+------MultipartBoundary--RjP9wSu6iZPfOkXdRU92n4kJf4wEOlKIvdH3fZmgEw------
